@@ -1,14 +1,18 @@
+import 'zone.js';
+import 'core-js/es7/reflect';
+
+import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
-import { MyApp } from './app.component';
+import { AppComponent } from './app.component';
  
 @NgModule({
 	declarations: [
-		MyApp
+		AppComponent
 	],
-	entryComponents: [
-		MyApp
-	],
-	providers: [
-	]
+	imports: [
+		BrowserModule
+	  ],
+	  providers: [],
+	bootstrap: [AppComponent]
 })
 export class AppModule {}
