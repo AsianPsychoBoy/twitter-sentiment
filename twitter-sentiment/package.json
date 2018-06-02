@@ -1,0 +1,30 @@
+{
+  "name": "twitter-sentiment",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "@angular/common": "^6.0.3",
+    "@angular/compiler": "^6.0.3",
+    "@angular/compiler-cli": "^6.0.3",
+    "@angular/core": "^6.0.3",
+    "@angular/forms": "^6.0.3",
+    "@angular/http": "^6.0.3",
+    "@angular/platform-browser": "^6.0.3",
+    "@angular/platform-browser-dynamic": "^6.0.3",
+    "@angular/platform-server": "^6.0.3",
+    "@babel/runtime": "^7.0.0-beta.42",
+    "meteor-node-stubs": "^0.3.2",
+    "meteor-rxjs": "^0.4.13",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.2.0",
+    "zone.js": "^0.8.26"
+  },
+  "devDependencies": {
+    "@types/meteor": "^1.4.15",
+    "@types/meteor-accounts-phone": "0.0.5",
+    "@types/underscore": "^1.8.8",
+    "meteor-typings": "^1.4.1"
+  }
+}
