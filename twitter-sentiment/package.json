@@ -2,7 +2,7 @@
   "name": "twitter-sentiment",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+    "start": "meteor run --settings config.json"
   },
   "dependencies": {
     "@angular/animations": "^6.0.4",
