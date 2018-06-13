@@ -1,5 +1,20 @@
-My App
-
-<div class="search-container">
-	<input matInput>
-</div>
+<form class="title-container" (ngSubmit)="search()">
+	<div class="title">
+		<h1 class="mat-display-4">Twitter Sentiment</h1>
+	</div>
+	<mat-card class="search-container">
+		<mat-form-field>
+			<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [disabled]="searching">
+		</mat-form-field>
+		<div class="search-button-container">
+			<button mat-raised-button color="primary" type="submit" [disabled]="searching">
+				<mat-icon>search</mat-icon>
+			</button>
+		</div>
+	</mat-card>
+	<div class="twitter-button-container">
+		<button mat-raised-button type="button">
+			Login with Twitter
+		</button>
+	</div>
+</form>

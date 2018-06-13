@@ -4,3 +4,50 @@
 // styles are for the entire app and not just one component.
 // Additionally, this file can be also used as an entry point
 // to import other Sass files to be included in the output CSS.
+
+.title-container {
+	position: absolute;
+	left: calc(50% - 30rem);
+	top: calc(50% - 10rem);
+	// transform: translate(-50%, -50%);
+	width: 60rem;
+	height: 20rem;
+	display: flex;
+	justify-content: center;
+	align-content: space-between;
+	flex-direction: column;
+	.title {
+		text-align: center;
+	}
+	.search-container {
+		width: 40rem;
+		height: 4rem;
+		display: flex;
+		justify-content: center;
+		align-self: center;
+		mat-form-field {
+			flex-grow: 1;
+			input {
+				font-size: xx-large;
+			}
+		}
+		.search-button-container {
+			display: flex;
+			justify-content: center;
+			align-content: center;
+			button {
+				margin-left: 2rem;
+			}
+		}
+	}
+	.twitter-button-container {
+		align-self: center;
+		margin-top: 2rem;
+		button {
+			background-color: #4AB3F4;
+			&:hover {
+				background-color: #1da1f2
+			}
+		}
+	}
+}

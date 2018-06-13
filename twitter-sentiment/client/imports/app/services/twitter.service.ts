@@ -21,7 +21,7 @@ export class TwitterService {
 		const url = `${this.apiUrl}/search/tweets.json?q=${q}`;
 		return this.http.get<Tweet>(url)
 			.pipe(
-				tap(res => console.log(res)),
+				tap(res => console.log('fetching tweets...')),
 				catchError(this.handleError<any>('search'))
 			);
 	}
