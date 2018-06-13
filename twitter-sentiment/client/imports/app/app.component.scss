@@ -8,10 +8,10 @@
 .title-container {
 	position: absolute;
 	left: calc(50% - 30rem);
-	top: calc(50% - 10rem);
+	top: calc(50% - 12rem);
 	// transform: translate(-50%, -50%);
 	width: 60rem;
-	height: 20rem;
+	height: 24rem;
 	display: flex;
 	justify-content: center;
 	align-content: space-between;
@@ -44,6 +44,7 @@
 		align-self: center;
 		margin-top: 2rem;
 		button {
+			color: white;
 			background-color: #4AB3F4;
 			&:hover {
 				background-color: #1da1f2
