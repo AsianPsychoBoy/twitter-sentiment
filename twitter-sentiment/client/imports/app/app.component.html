@@ -4,7 +4,7 @@
 	</div>
 	<mat-card class="search-container">
 		<mat-form-field>
-			<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [disabled]="searching">
+			<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [disabled]="searching" [ngModelOptions]="{standalone: true}">
 		</mat-form-field>
 		<div class="search-button-container">
 			<button mat-raised-button color="primary" type="submit" [disabled]="searching">
@@ -13,7 +13,7 @@
 		</div>
 	</mat-card>
 	<div class="twitter-button-container">
-		<button mat-raised-button type="button">
+		<button mat-raised-button type="button" (click)="loginWithTwitter()">
 			Login with Twitter
 		</button>
 	</div>
