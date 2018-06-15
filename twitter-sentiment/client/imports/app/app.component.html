@@ -13,8 +13,12 @@
 		</div>
 	</mat-card>
 	<div class="twitter-button-container">
-		<button mat-raised-button type="button" (click)="loginWithTwitter()">
-			Login with Twitter
+		<span class="mat-body-1 username" *ngIf="user">{{ user.profile.name }}</span>
+		<button *ngIf="!user" mat-raised-button type="button" (click)="loginWithTwitter()" [disabled]="loggingIn">
+			Log in with Twitter
+		</button>
+		<button *ngIf="user" mat-raised-button type="button" (click)="logout()" [disabled]="loggingIn">
+			Log out
 		</button>
 	</div>
 </form>

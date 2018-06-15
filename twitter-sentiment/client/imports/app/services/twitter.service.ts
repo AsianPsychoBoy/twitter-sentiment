@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable, of, Observer } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, of, Observer, BehaviorSubject, bindCallback } from 'rxjs';
+import { catchError, flatMap, tap } from 'rxjs/operators';
 
 const httpOptions = {
 	headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,16 +13,17 @@ const httpOptions = {
 })
 export class TwitterService {
 
-	apiUrl: 'https://api.twitter.com/1.1';
+	auth$ = new BehaviorSubject<Meteor.User>(Meteor.user());
 
-	constructor(private http: HttpClient) {	}
+	constructor(private http: HttpClient) { }
 
 	search(q: string): Observable<Tweet> {
-		const url = `${this.apiUrl}/search/tweets.json?q=${q}`;
-		return this.http.get<Tweet>(url)
+		return Meteor.call('search', q)
 			.pipe(
-				tap(res => console.log('fetching tweets...')),
-				catchError(this.handleError<any>('search'))
+				catchError(this.handleError<any>('search')),
+				flatMap((val) => {
+					return bindCallback(<Function>Meteor.subscribe)('search-results')
+				})
 			);
 	}
 
@@ -30,13 +31,35 @@ export class TwitterService {
 		return Observable.create((observer: Observer<Meteor.User>) => {
 			Meteor.loginWithTwitter({}, (err) => {
 				if (err) {
-					// TODO: prevent the user from interacting with the site. 
+					// TODO: prevent the user from interacting with the site.
 					observer.error('Failed to log in with Twitter: ' + err);
 				} else {
 					observer.next(Meteor.user());
+					this.auth$.next(Meteor.user());
+					observer.complete();
 				}
 			})
-		});
+		})
+		.pipe(
+			catchError(this.handleError<any>('search'))
+		);
+	}
+
+	logout(): Observable<Meteor.User> {
+		return Observable.create((observer: Observer<Meteor.User>) => {
+			Meteor.logout((err) => {
+				if (err) {
+					observer.error('Failed to logout: ' + err);
+				} else {
+					observer.next(Meteor.user());
+					this.auth$.next(Meteor.user());
+					observer.complete();
+				}
+			});
+		})
+		.pipe(
+			catchError(this.handleError<any>('search'))
+		);
 	}
 
 	private handleError<T> (operation = 'operation', result?: T) {

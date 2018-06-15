@@ -47,8 +47,14 @@
 			color: white;
 			background-color: #4AB3F4;
 			&:hover {
-				background-color: #1da1f2
+				background-color: #1da1f2;
 			}
+			&[disabled]:hover {
+				background-color: #4AB3F4;
+			}
+		}
+		.username {
+			margin-right: 1rem;
 		}
 	}
 }
