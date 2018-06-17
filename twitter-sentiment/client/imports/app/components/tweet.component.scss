@@ -1,0 +1,16 @@
+mat-list-item {
+	height: 6rem;
+	.tweet-text {
+		white-space: normal;
+	}
+	.sentiment {
+		padding-left: 2rem;
+		mat-chip {
+			width: 8rem;
+			text-align: center;
+			color: white;
+			display: block;
+			font-size: 1rem;
+		}
+	}
+}

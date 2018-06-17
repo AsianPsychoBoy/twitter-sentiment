@@ -15,6 +15,15 @@ export class NaturalLanguage {
 			keyFilename: './google-api-config.json'
 		})
 	}
+
+	analyzeSentiment(q: string) {
+		const document = {
+			content: q,
+			type: 'PLAIN_TEXT'
+		}
+		return this.client
+			.analyzeSentiment({ document })
+	}
 }
 
 export interface GoogleOptions {

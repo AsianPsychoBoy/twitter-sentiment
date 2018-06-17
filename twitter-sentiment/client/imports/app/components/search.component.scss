@@ -1,0 +1,49 @@
+.title-container {
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-content: space-between;
+	flex-direction: column;
+	.title {
+		text-align: center;
+	}
+	.search-container {
+		width: 40rem;
+		height: 4rem;
+		display: flex;
+		justify-content: center;
+		align-self: center;
+		mat-form-field {
+			flex-grow: 1;
+			input {
+				font-size: xx-large;
+			}
+		}
+		.search-button-container {
+			display: flex;
+			justify-content: center;
+			align-content: center;
+			button {
+				margin-left: 2rem;
+			}
+		}
+	}
+	.twitter-button-container {
+		align-self: center;
+		margin-top: 2rem;
+		button {
+			color: white;
+			background-color: #4AB3F4;
+			&:hover {
+				background-color: #1da1f2;
+			}
+			&[disabled]:hover {
+				background-color: #4AB3F4;
+			}
+		}
+		.username {
+			margin-right: 1rem;
+		}
+	}
+}

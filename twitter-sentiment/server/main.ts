@@ -7,6 +7,7 @@ import { NaturalLanguage } from './googleAPI';
 import { writeFileSync } from 'fs';
 
 const searchResults= new Mongo.Collection('search-results');
+const sentimentResults = new Mongo.Collection('sentiment-results');
 
 Meteor.startup(() => {
 	if (!Meteor.settings.twitter) {
@@ -68,6 +69,18 @@ Meteor.startup(() => {
 				},
 				err => { console.error(err) }
 			);
+		},
+		async analyze(q: string, tweetId: string) {
+			// use analyze entity sentiment for more accuracy
+			const results = await naturalLanguage.analyzeSentiment(q);
+
+			console.log(results);
+			const sentiment = results[0].documentSentiment;
+			const sentences = results[0].sentences;
+
+			sentimentResults.upsert(
+				{ tweetId }, { tweetId, score: sentiment.score, magnitude: sentiment.magnitude }
+			)
 		}
 	});
 });

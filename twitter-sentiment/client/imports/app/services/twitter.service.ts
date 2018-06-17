@@ -100,9 +100,10 @@ export class TwitterService {
 
 export interface Tweet {
 	created_at: string;
-	text: string;
+	full_text: string;
 	retweet_count: number;
 	favorite_count: number;
+	id_str: string;
 	user: {
 		name: string;
 		screen_name: string;
