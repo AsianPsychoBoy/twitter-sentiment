@@ -6,6 +6,7 @@ import { tap, map } from 'rxjs/operators';
 
 Meteor.startup(() => {
 	platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.log(err));
+
 	const callerino = Meteor.call;
 	Meteor.call = function(name: string, ...args: any[]): Observable<any> {
 		let call = bindCallback(<Function>(callerino));

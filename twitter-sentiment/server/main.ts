@@ -1,9 +1,16 @@
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 import { ServiceConfiguration } from 'meteor/service-configuration';
 import { Accounts } from 'meteor/accounts-base'
-import { Twitter } from './twitter';
+import { Twitter } from './twitterAPI';
+import { writeFileSync } from 'fs';
+
+const searchResults= new Mongo.Collection('search-results');
 
 Meteor.startup(() => {
+	if (!Meteor.settings.twitter) {
+		throw new Meteor.Error('Please create a config.js file.');
+	}
 	// code to run on server at startup
 	ServiceConfiguration.configurations.upsert(
 		{ service: 'twitter' },
@@ -37,10 +44,23 @@ Meteor.startup(() => {
 			}
 			twitter.search(q).subscribe(
 				res => {
-					console.log(res);
-					Meteor.publish('search-results', () => {
-						return res;
-					})
+					const tweets = res.data.statuses;
+					console.log(res.data);
+
+					// TODO: enable this after testing
+					// searchResults.remove({
+					// 	userId: Meteor.userId()
+					// });
+
+					searchResults.upsert(
+						{
+							userId: Meteor.userId()
+						},
+						{
+							userId: Meteor.userId(),
+							tweets: JSON.stringify(tweets)
+						}
+					);
 				},
 				err => { console.error(err) }
 			);

@@ -17,8 +17,15 @@ export class Twitter {
 	}
 
 	search(q: string): Observable<any> {
-		const url = `${this.apiUrl}/search/tweets.json?q=${q}`;
-		return bindCallback(<(url, params, callback) => {}>this.oauth1.get).call(this.oauth1, url, {})
+		//TODO: this only searches the most recent 1500 tweets, to get more I have to use MaxID
+		const url = `${this.apiUrl}/search/tweets.json`;
+		return bindCallback(<(url, params, callback) => {}>this.oauth1.get).call(this.oauth1, url, {
+			q,
+			result_type: 'popular',
+			count: '100',
+			lang: 'en',
+			tweet_mode: 'extended'
+		})
 		.pipe(
 			map((results) => {
 				// The first argument passed into the callback of Meteor.call is an error object.

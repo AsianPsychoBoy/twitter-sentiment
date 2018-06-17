@@ -58,3 +58,13 @@
 		}
 	}
 }
+
+.search-results-container {
+	mat-list {
+		mat-list-item {
+			.tweet-text {
+				white-space: normal;
+			}
+		}
+	}
+}

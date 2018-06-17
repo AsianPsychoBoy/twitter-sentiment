@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable, of, Observer, BehaviorSubject, bindCallback } from 'rxjs';
+import { Mongo } from 'meteor/mongo';
+
+import { Observable, of, Observer, BehaviorSubject, bindCallback, observable } from 'rxjs';
 import { catchError, flatMap, tap } from 'rxjs/operators';
 
 const httpOptions = {
@@ -14,17 +16,33 @@ const httpOptions = {
 export class TwitterService {
 
 	auth$ = new BehaviorSubject<Meteor.User>(Meteor.user());
+	searchResults = new Mongo.Collection('search-results');
 
-	constructor(private http: HttpClient) { }
+	searchResultsHandle: Meteor.LiveQueryHandle;
+	searchResults$: Observable<Tweet[]>;
 
-	search(q: string): Observable<Tweet> {
-		return Meteor.call('search', q)
-			.pipe(
-				catchError(this.handleError<any>('search')),
-				flatMap((val) => {
-					return bindCallback(<Function>Meteor.subscribe)('search-results')
-				})
-			);
+	constructor(private http: HttpClient) {
+		this.searchResults$ = Observable.create((observer: Observer<Tweet[]>) => {
+			// TODO: disable autopublish and move finding documents by userId to server-side
+			this.searchResultsHandle = this.searchResults.find({ userId: Meteor.userId() }).observe({
+				added: (doc) => {
+					const tweets = JSON.parse(doc['tweets']);
+					observer.next(tweets);
+				}
+			});
+		});
+	}
+
+	search(q: string): Observable<Tweet[]> {
+		// return Meteor.call('search', q)
+		// 	.pipe(
+		// 		catchError(this.handleError<any>('search')),
+		// 		flatMap((val) => {
+		// 			return this.searchResults$;
+		// 		})
+		// 	);
+		const tweets = JSON.parse(this.searchResults.findOne({ userId: Meteor.userId() })['tweets']);
+		return of(tweets);
 	}
 
 	loginWithTwitter(): Observable<Meteor.User> {
@@ -76,5 +94,13 @@ export class TwitterService {
 };
 
 export interface Tweet {
-	text: string
+	created_at: string;
+	text: string;
+	retweet_count: number;
+	favorite_count: number;
+	user: {
+		name: string;
+		screen_name: string;
+		profile_image_url_https: string;
+	}
 }

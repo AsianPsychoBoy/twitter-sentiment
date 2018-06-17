@@ -1,7 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { TwitterService } from './services/twitter.service';
-
-declare const twttr;
+import { Component, OnInit, ChangeDetectorRef, Renderer2 } from '@angular/core';
+import { TwitterService, Tweet} from './services/twitter.service';
 
 @Component({
   selector: 'my-app',
@@ -16,26 +14,29 @@ export class AppComponent implements OnInit {
 	// TODO: Prevent user interaction when logging in
 	user: Meteor.User;
 
-	constructor(private twitterService: TwitterService, private changeDetector: ChangeDetectorRef) {}
+	searchResults: Tweet[];
+
+	constructor(private twitterService: TwitterService, private changeDetector: ChangeDetectorRef, private r: Renderer2) {}
 
 	ngOnInit() {
 		this.twitterService.auth$.subscribe(
 			user => {
 				this.user = user;
 			}
-		)
+		);
 	}
 
 	search() {
 		this.searching = true;
 		this.twitterService.search(this.searchStr).subscribe(
-			res => {
-				console.log(res);
-			},
-			() => {
+			tweets => {
+				console.log(tweets);
+				this.searchResults = tweets;
+
 				this.searching = false;
 				this.changeDetector.detectChanges();
-			}
+			},
+			err => {}
 		)
 	}
 
@@ -45,7 +46,7 @@ export class AppComponent implements OnInit {
 			user => {
 				console.log('authenticated:' + user);
 			},
-			err => { console.log(err) },
+			err => { },
 			() => { this.loggingIn = false; this.changeDetector.detectChanges(); }
 		)
 	}
@@ -56,7 +57,7 @@ export class AppComponent implements OnInit {
 			user => {
 				console.log('logged out: ' + user);
 			},
-			err => { console.log(err) },
+			err => { },
 			() => { this.loggingIn = false; this.changeDetector.detectChanges(); }
 		)
 	}
