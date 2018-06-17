@@ -4,10 +4,10 @@
 		</div>
 		<mat-card class="search-container">
 			<mat-form-field>
-				<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [disabled]="searching" [ngModelOptions]="{standalone: true}" (focus)="hideResults()" (focusout)="showResults()">
+				<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [ngModelOptions]="{standalone: true}">
 			</mat-form-field>
 			<div class="search-button-container">
-				<button mat-raised-button color="primary" type="submit" [disabled]="searching && searchForm.valid">
+				<button mat-raised-button color="primary" type="submit" [disabled]="!searchForm.valid">
 					<mat-icon>search</mat-icon>
 				</button>
 			</div>

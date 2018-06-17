@@ -20,13 +20,13 @@ export class TweetComponent implements OnInit, OnDestroy {
 
 	sentimentSubscription: Subscription;
 
-	constructor (private googleService: GoogleService) { }
+	constructor (private googleService: GoogleService, private changeDetector: ChangeDetectorRef) { }
 
 	ngOnInit() {
 		this.sentimentSubscription = this.googleService.analyzeSentiment(this.tweet.full_text, this.tweet.id_str).subscribe(
 			results => {
 				this.sentiment = results;
-
+				this.changeDetector.detectChanges();
 				console.log(results);
 			}
 		)
@@ -37,7 +37,7 @@ export class TweetComponent implements OnInit, OnDestroy {
 	}
 
 	sentimentText() {
-		if (this.sentiment.magnitude > 0.4) {
+		if (this.sentiment.magnitude > 1) {
 			if (Math.abs(this.sentiment.score) < 0.15) {
 				return { text: 'Mixed', color: SentimentColors.grey };
 			} else if (this.sentiment.score > 0) {

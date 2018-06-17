@@ -14,36 +14,19 @@ import { Subscription } from 'rxjs';
 	providers: []
 })
 export class ResultsComponent implements OnInit, OnDestroy {
-
-	searching = false;
 	
 	searchResults: Tweet[];
 
 	constructor(private twitterService: TwitterService, private route: ActivatedRoute) {}
 
 	ngOnInit() {
-		this.search();
+		this.route.data.subscribe(
+			(data: { results: Tweet[] }) => {
+				this.searchResults = data.results;
+			}
+		)
 	}
 
 	ngOnDestroy() {}
 
-	search() {
-		// TODO: use a resolve guard to improve UX
-		this.searching = true;
-		const searchStr = this.route.paramMap.subscribe(
-			params => {
-				console.log(params);
-				const searchStr = params.get('q');
-				this.twitterService.search(searchStr).subscribe(
-					tweets => {
-						console.log(tweets);
-						this.searchResults = tweets;
-		
-						this.searching = false;
-					},
-					err => {}
-				)
-			}
-		)
-	}
 }

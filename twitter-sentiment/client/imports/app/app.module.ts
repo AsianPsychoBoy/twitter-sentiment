@@ -16,6 +16,7 @@ import { ResultsComponent } from './components/results.component';
 import { GoogleService } from './services/google.service';
 import { TwitterService } from './services/twitter.service';
 import { AuthGuard } from './services/auth-guard.service';
+import { SearchResolver } from './services/search-resolver.service'
 
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +27,6 @@ import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { appRoutes } from './app.routing';
-import { Twitter } from 'server/twitterAPI';
  
 @NgModule({
 	declarations: [
@@ -57,7 +57,8 @@ import { Twitter } from 'server/twitterAPI';
 	  providers: [
 		  GoogleService,
 		  TwitterService,
-		  AuthGuard
+		  AuthGuard,
+		  SearchResolver
 	  ],
 	bootstrap: [AppComponent]
 })

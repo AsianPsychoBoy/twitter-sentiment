@@ -57,6 +57,10 @@ Meteor.startup(() => {
 					// 	userId: Meteor.userId()
 					// });
 
+					// sentimentResults.remove({
+					// 	userId: Meteor.userId()
+					// });
+
 					searchResults.upsert(
 						{
 							userId: Meteor.userId()
@@ -79,7 +83,13 @@ Meteor.startup(() => {
 			const sentences = results[0].sentences;
 
 			sentimentResults.upsert(
-				{ tweetId }, { tweetId, score: sentiment.score, magnitude: sentiment.magnitude }
+				{ tweetId },
+				{
+					userId: Meteor.userId(),
+					tweetId,
+					score: sentiment.score,
+					magnitude: sentiment.magnitude
+				}
 			)
 		}
 	});

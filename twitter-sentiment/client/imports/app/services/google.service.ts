@@ -5,7 +5,7 @@ import { Mongo } from 'meteor/mongo';
 import { Accounts } from 'meteor/accounts-base'
 
 import { Observable, of, Observer, BehaviorSubject, bindCallback, observable } from 'rxjs';
-import { catchError, flatMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 
 const httpOptions = {
 	headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -29,7 +29,7 @@ export class GoogleService {
 		// return Meteor.call('analyze', q, tweetId)
 		// 	.pipe(
 		// 		catchError(this.handleError<any>('analyze')),
-		// 		flatMap((val) => {
+		// 		switchMap((val) => {
 		// 			const sentimentResults$ = Observable.create((observer: Observer<any>) => {
 		// 				this.sentimentResultsHandle = this.sentimentResults.find({ tweetId }).observe({
 		// 					added: (doc) => {

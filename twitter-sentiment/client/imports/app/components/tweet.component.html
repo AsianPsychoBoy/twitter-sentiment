@@ -2,5 +2,5 @@
 	<img matListAvatar [src]="tweet.user.profile_image_url_https" alt="">
 	<h4 mat-line>{{ tweet.user.name }}</h4>
 	<p mat-line class="tweet-text">{{ tweet.full_text }}</p>
-	<mat-chip-list class="sentiment"><mat-chip [style.background-color]="sentimentText().color">{{ sentimentText().text }}</mat-chip></mat-chip-list>
+	<mat-chip-list class="sentiment" *ngIf="sentiment"><mat-chip [style.background-color]="sentimentText().color">{{ sentimentText().text }}</mat-chip></mat-chip-list>
 </mat-list-item>

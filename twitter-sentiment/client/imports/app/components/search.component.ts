@@ -20,10 +20,12 @@ export class SearchComponent implements OnInit {
 	// TODO: Prevent user interaction when logging in
 	user: Meteor.User;
 
+	authSubscription: Subscription;
+
 	constructor(private twitterService: TwitterService, private changeDetector: ChangeDetectorRef, private router: Router) {}
 
 	ngOnInit() {
-		this.twitterService.auth$.subscribe(
+		this.authSubscription = this.twitterService.auth$.subscribe(
 			user => {
 				this.user = user;
 				this.changeDetector.detectChanges();
@@ -31,8 +33,13 @@ export class SearchComponent implements OnInit {
 		);
 	}
 
+	ngOnDestroy() {
+		this.authSubscription.unsubscribe();
+	}
+
 	search() {
-		this.router.navigate(['search'], { queryParams: { q: this.searchStr } })
+		console.log('clicked search');
+		this.router.navigate(['search'], { queryParams: { q: this.searchStr } });
 	}
 
 	loginWithTwitter() {

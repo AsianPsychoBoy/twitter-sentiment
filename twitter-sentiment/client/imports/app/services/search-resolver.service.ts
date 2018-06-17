@@ -1,14 +1,28 @@
 import { Injectable } from '@angular/core';
-import { Router, Resolve, RouterStateSnapshot,ActivatedRouteSnapshot } from '@angular/router';
+import { Router, Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
  
-import { Crisis, CrisisService }  from './crisis.service';
+import { Tweet, TwitterService }  from './twitter.service';
+import { Twitter } from 'server/twitterAPI';
  
 @Injectable()
-export class CrisisDetailResolver implements Resolve<Crisis> {
-	constructor(private cs: CrisisService, private router: Router) {}
+export class SearchResolver implements Resolve<Tweet[]> {
+	constructor(private twitterService: TwitterService, private router: Router) {}
 
-	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Crisis> {
+	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Tweet[]> {
+		console.log('search');
+		const searchStr = route.queryParamMap.get('q');
+		return this.twitterService.search(searchStr).pipe(
+			take(1),
+			map(tweets => {
+				if (tweets) {
+					return tweets;
+				} else {
+					this.router.navigate(['']);
+					return null;
+				}
+			})
+		)
 	}
 }

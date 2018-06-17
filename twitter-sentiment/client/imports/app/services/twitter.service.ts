@@ -5,7 +5,7 @@ import { Mongo } from 'meteor/mongo';
 import { Accounts } from 'meteor/accounts-base'
 
 import { Observable, of, Observer, BehaviorSubject, bindCallback, observable } from 'rxjs';
-import { catchError, flatMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 
 const httpOptions = {
 	headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -23,11 +23,13 @@ export class TwitterService {
 	searchResults$: Observable<Tweet[]>;
 
 	constructor(private http: HttpClient) {
+		// TODO: use bahavior subject so it doesn't return in memory documents immediately
 		this.searchResults$ = Observable.create((observer: Observer<Tweet[]>) => {
 			// TODO: disable autopublish and move finding documents by userId to server-side
-			this.searchResultsHandle = this.searchResults.find({ userId: Meteor.userId() }).observe({
-				added: (doc) => {
-					const tweets = JSON.parse(doc['tweets']);
+			this.searchResultsHandle = this.searchResults.find({ userId: Meteor.userId() }).observeChanges({
+				changed: (id, fields) => {
+					console.log('doc changed', id)
+					const tweets = JSON.parse(fields['tweets']);
 					observer.next(tweets);
 				}
 			});
@@ -39,15 +41,15 @@ export class TwitterService {
 	}
 
 	search(q: string): Observable<Tweet[]> {
-		// return Meteor.call('search', q)
-		// 	.pipe(
-		// 		catchError(this.handleError<any>('search')),
-		// 		flatMap((val) => {
-		// 			return this.searchResults$;
-		// 		})
-		// 	);
-		const tweets = JSON.parse(this.searchResults.findOne({ userId: Meteor.userId() })['tweets']);
-		return of(tweets);
+		return Meteor.call('search', q)
+			.pipe(
+				catchError(this.handleError<any>('search')),
+				switchMap((val) => {
+					return this.searchResults$;
+				})
+			);
+		// const tweets = JSON.parse(this.searchResults.findOne({ userId: Meteor.userId() })['tweets']);
+		// return of(tweets);
 	}
 
 	loginWithTwitter(): Observable<Meteor.User> {

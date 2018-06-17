@@ -4,6 +4,7 @@ import { ResultsComponent } from './components/results.component';
 import { SearchComponent } from './components/search.component';
 
 import { AuthGuard } from './services/auth-guard.service';
+import { SearchResolver } from './services/search-resolver.service'
 
 export const appRoutes: Routes = [
 	{
@@ -13,6 +14,9 @@ export const appRoutes: Routes = [
 	{
 		path: 'search',
 		component: ResultsComponent,
-		canActivate: [AuthGuard]
+		canActivate: [AuthGuard],
+		resolve: {
+			results: SearchResolver
+		}
 	}
 ]
