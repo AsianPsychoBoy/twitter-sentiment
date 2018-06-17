@@ -1,34 +1,36 @@
-<form class="title-container" (ngSubmit)="search()">
-	<div class="title">
-		<h1 class="mat-display-4">Twitter Sentiment</h1>
-	</div>
-	<mat-card class="search-container">
-		<mat-form-field>
-			<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [disabled]="searching" [ngModelOptions]="{standalone: true}">
-		</mat-form-field>
-		<div class="search-button-container">
-			<button mat-raised-button color="primary" type="submit" [disabled]="searching">
-				<mat-icon>search</mat-icon>
+<div class="container">
+	<form class="title-container" (ngSubmit)="search()" [@display-results.searchbar]="displayResults ? 'out' : 'in'" #searchForm="ngForm">
+		<div class="title">
+			<h1 class="mat-display-4">Twitter Sentiment</h1>
+		</div>
+		<mat-card class="search-container">
+			<mat-form-field>
+				<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [disabled]="searching" [ngModelOptions]="{standalone: true}" (focus)="hideResults()" (focusout)="showResults()">
+			</mat-form-field>
+			<div class="search-button-container">
+				<button mat-raised-button color="primary" type="submit" [disabled]="searching && searchForm.valid">
+					<mat-icon>search</mat-icon>
+				</button>
+			</div>
+		</mat-card>
+		<div class="twitter-button-container">
+			<span class="mat-body-1 username" *ngIf="user">{{ user.profile.name }}</span>
+			<button *ngIf="!user" mat-raised-button type="button" (click)="loginWithTwitter()" [disabled]="loggingIn">
+				Log in with Twitter
+			</button>
+			<button *ngIf="user" mat-raised-button type="button" (click)="logout()" [disabled]="loggingIn">
+				Log out
 			</button>
 		</div>
-	</mat-card>
-	<div class="twitter-button-container">
-		<span class="mat-body-1 username" *ngIf="user">{{ user.profile.name }}</span>
-		<button *ngIf="!user" mat-raised-button type="button" (click)="loginWithTwitter()" [disabled]="loggingIn">
-			Log in with Twitter
-		</button>
-		<button *ngIf="user" mat-raised-button type="button" (click)="logout()" [disabled]="loggingIn">
-			Log out
-		</button>
-	</div>
-</form>
+	</form>
 
-<div class="search-results-container mat-typography">
-	<mat-list>
-		<mat-list-item *ngFor="let tweet of searchResults">
-			<img matListAvatar [src]="tweet.user.profile_image_url_https" alt="">
-			<h4 mat-line>{{tweet.user.name}}</h4>
-			<p mat-line class="tweet-text"> {{tweet.full_text}} </p>
-		</mat-list-item>
-	</mat-list>
+	<div class="search-results-container mat-typography" [@display-results.results]="displayResults ? 'in' : 'out'">
+		<mat-list>
+			<mat-list-item *ngFor="let tweet of searchResults">
+				<img matListAvatar [src]="tweet.user.profile_image_url_https" alt="">
+				<h4 mat-line>{{ tweet.user.name }}</h4>
+				<p mat-line class="tweet-text">{{ tweet.full_text }}</p>
+			</mat-list-item>
+		</mat-list>
+	</div>
 </div>

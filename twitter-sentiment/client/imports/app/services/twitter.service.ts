@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Mongo } from 'meteor/mongo';
+import { Accounts } from 'meteor/accounts-base'
 
 import { Observable, of, Observer, BehaviorSubject, bindCallback, observable } from 'rxjs';
 import { catchError, flatMap, tap } from 'rxjs/operators';
@@ -30,6 +31,10 @@ export class TwitterService {
 					observer.next(tweets);
 				}
 			});
+		});
+
+		Accounts.onPageLoadLogin(() => {
+			this.auth$.next(Meteor.user());
 		});
 	}
 

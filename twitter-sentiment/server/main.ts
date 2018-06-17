@@ -3,6 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import { ServiceConfiguration } from 'meteor/service-configuration';
 import { Accounts } from 'meteor/accounts-base'
 import { Twitter } from './twitterAPI';
+import { NaturalLanguage } from './googleAPI';
 import { writeFileSync } from 'fs';
 
 const searchResults= new Mongo.Collection('search-results');
@@ -24,6 +25,7 @@ Meteor.startup(() => {
 	);
 
 	let twitter: Twitter = null;
+	let naturalLanguage: NaturalLanguage = null;
 
 	Accounts.onLogin((details) => {
 		twitter = new Twitter({
@@ -32,6 +34,8 @@ Meteor.startup(() => {
 			accessToken: details.user.services.twitter.accessToken,
 			accessTokenSecret: details.user.services.twitter.accessTokenSecret
 		});
+
+		naturalLanguage = new NaturalLanguage(Meteor.settings.google);
 	})
 
 	Meteor.methods({
