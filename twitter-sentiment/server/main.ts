@@ -6,6 +6,8 @@ import { Twitter } from './twitterAPI';
 import { NaturalLanguage } from './googleAPI';
 import { writeFileSync } from 'fs';
 
+import { take, tap } from 'rxjs/operators';
+
 const searchResults= new Mongo.Collection('search-results');
 const sentimentResults = new Mongo.Collection('sentiment-results');
 
@@ -47,19 +49,18 @@ Meteor.startup(() => {
 			if (!q) {
 				throw new Meteor.Error('You must enter a query.');	
 			}
-			twitter.search(q).subscribe(
-				res => {
-					const tweets = res.data.statuses;
-					console.log(res.data);
-
-					// TODO: enable this after testing
-					searchResults.remove({
-						userId: Meteor.userId()
-					});
-
+			twitter.search(q, 100)
+			.pipe(
+				take(1),
+				tap(() => {
 					sentimentResults.remove({
 						userId: Meteor.userId()
 					});
+				})
+			)
+			.subscribe(
+				tweets => {
+					console.log('got tweets');
 
 					searchResults.upsert(
 						{

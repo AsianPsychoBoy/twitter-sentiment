@@ -11,7 +11,28 @@ import { Subscription } from 'rxjs';
 	selector: 'my-app-results',
 	templateUrl: './results.component.html',
 	styleUrls: ['./results.component.scss'],
-	providers: []
+	providers: [],
+	animations: [
+		trigger('search', [
+			state('in', style({
+				transform: 'translateY(0)',
+				opacity: 1
+			})),
+			transition(':enter', [
+				style({
+					transform: 'translateY(100%)',
+					opacity: 0
+				}),
+				animate('400ms ease-out')
+			]),
+			transition(':leave', [
+				animate('400ms ease-out', style({
+					transform: 'translateY(100%)',
+					opacity: 0
+				}))
+			])
+		])
+	]
 })
 export class ResultsComponent implements OnInit, OnDestroy {
 	
@@ -24,6 +45,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.routeDataSubscription = this.route.data.subscribe(
 			(data: { results: Tweet[] }) => {
+				console.log(data);
 				this.searchResults = data.results;
 			}
 		)

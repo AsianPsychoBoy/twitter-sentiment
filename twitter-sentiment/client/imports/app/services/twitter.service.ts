@@ -26,11 +26,12 @@ export class TwitterService {
 	constructor(private http: HttpClient) {
 		// TODO: use bahavior subject so it doesn't return in memory documents immediately
 		this.searchResults$ = Observable.create((observer: Observer<Tweet[]>) => {
+			console.log('initailized')
 			// TODO: disable autopublish and move finding documents by userId to server-side
-			this.searchResultsHandle = this.searchResults.find({ userId: Meteor.userId() }).observeChanges({
-				added: (id, fields) => {
-					console.log('doc changed', id)
-					const tweets = JSON.parse(fields['tweets']);
+			this.searchResultsHandle = this.searchResults.find({ userId: Meteor.userId() }).observe({
+				changed: (newDoc) => {
+					console.log('doc changed')
+					const tweets = JSON.parse(newDoc['tweets']);
 					observer.next(tweets);
 				}
 			});

@@ -1,6 +1,6 @@
-<button class="search-button" routerLink="/" mat-raised-button color="primary"><mat-icon>search</mat-icon></button>
+<div class="search-results-container mat-typography" [@search]="'in'">
+	<button class="search-button" routerLink="/" mat-raised-button color="primary"><mat-icon>search</mat-icon></button>
 
-<div class="search-results-container mat-typography">
 	<mat-list *ngIf="searchResults">
 		<my-app-tweet *ngFor="let tweet of searchResults" [tweet]="tweet">
 		</my-app-tweet>

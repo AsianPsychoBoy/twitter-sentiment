@@ -11,7 +11,29 @@ import { Subscription } from 'rxjs';
 	selector: 'my-app-search',
 	templateUrl: './search.component.html',
 	styleUrls: ['./search.component.scss'],
-	providers: []
+	providers: [],
+	animations: [
+		trigger('search', [
+			state('in', style({
+				transform: 'translateY(0)',
+				opacity: 1
+			})),
+			// TODO: router animations: https://angularfirebase.com/snippets/router-transition-animations-with-angular-4/
+			transition(':leave', [
+				animate('400ms ease-out', style({
+					transform: 'translateY(-100%)',
+					opacity: 0
+				}))
+			]),
+			transition(':enter', [
+				style({
+					transform: 'translateY(-100%)',
+					opacity: 0
+				}),
+				animate('400ms ease-out')
+			])
+		])
+	]
 })
 export class SearchComponent implements OnInit {
 	searchStr = '';

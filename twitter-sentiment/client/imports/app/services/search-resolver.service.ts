@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, take, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, take, catchError, timeout } from 'rxjs/operators';
  
 import { Tweet, TwitterService }  from './twitter.service';
 import { Twitter } from 'server/twitterAPI';
@@ -14,6 +14,7 @@ export class SearchResolver implements Resolve<Tweet[]> {
 		const searchStr = route.queryParamMap.get('q');
 		return this.twitterService.search(searchStr).pipe(
 			take(1),
+			timeout(10000),
 			map(tweets => {
 				console.log('resolved:', tweets)
 				if (tweets) {
@@ -22,6 +23,11 @@ export class SearchResolver implements Resolve<Tweet[]> {
 					this.router.navigate(['']);
 					return null;
 				}
+			}),
+			catchError((err) => {
+				console.log('tiemout');
+				this.router.navigate(['']);
+				return of(null);
 			})
 		)
 	}

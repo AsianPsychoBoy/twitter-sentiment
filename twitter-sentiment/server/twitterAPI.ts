@@ -1,6 +1,6 @@
 import { HTTP } from 'meteor/http';
-import { bindCallback, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { bindCallback, Observable, of } from 'rxjs';
+import { map, switchMap, delay } from 'rxjs/operators';
 
 export class Twitter {
 	apiUrl = 'https://api.twitter.com/1.1';
@@ -16,23 +16,44 @@ export class Twitter {
 		this.oauth1.accessTokenSecret = options.accessTokenSecret;
 	}
 
-	search(q: string): Observable<any> {
+	search(q: string, minCount: number, nextResults?: string, tweetsToReturn?: any[]): Observable<any> {
 		//TODO: this only searches the most recent 1500 tweets, to get more I have to use MaxID
-		const url = `${this.apiUrl}/search/tweets.json`;
-		return bindCallback(<(url, params, callback) => {}>this.oauth1.get).call(this.oauth1, url, {
+		let url = `${this.apiUrl}/search/tweets.json`;
+
+		if (nextResults) {
+			url += nextResults;
+		}
+
+		const options = {
 			q,
-			result_type: 'popular',
-			count: '100',
+			result_type: 'mixed',
 			lang: 'en',
-			tweet_mode: 'extended'
-		})
+			count: 100,
+			tweet_mode: 'extended',
+		}
+
+		return bindCallback(<(url, params, callback) => {}>this.oauth1.get).call(this.oauth1, url, options)
 		.pipe(
-			map((results) => {
-				let errorObj: any = results[0];
+			switchMap((results) => {
+				const errorObj: any = results[0];
+
 				if (errorObj) {
 					throw new Error(errorObj);
 				}
-				return results[1];
+
+				if (!tweetsToReturn) {
+					tweetsToReturn = [];
+				}
+
+				const data = results[1].data;
+				console.log(tweetsToReturn.length);
+				tweetsToReturn = tweetsToReturn.concat(data.statuses);
+
+				if (tweetsToReturn.length < minCount) {
+					return this.search(q, minCount, data.search_metadata.next_results, tweetsToReturn)
+				} else {
+					return of(tweetsToReturn);
+				}
 			})
 		);
 	}

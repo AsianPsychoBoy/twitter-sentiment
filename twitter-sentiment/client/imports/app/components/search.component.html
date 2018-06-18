@@ -1,24 +1,24 @@
-<form class="title-container" (ngSubmit)="search()" #searchForm="ngForm">
-		<div class="title">
-			<h1 class="mat-display-4">Twitter Sentiment</h1>
-		</div>
-		<mat-card class="search-container">
-			<mat-form-field>
-				<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [ngModelOptions]="{standalone: true}">
-			</mat-form-field>
-			<div class="search-button-container">
-				<button mat-raised-button color="primary" type="submit" [disabled]="!searchForm.valid">
-					<mat-icon>search</mat-icon>
-				</button>
-			</div>
-		</mat-card>
-		<div class="twitter-button-container">
-			<span class="mat-body-1 username" *ngIf="user">{{ user.profile.name }}</span>
-			<button *ngIf="!user" mat-raised-button type="button" (click)="loginWithTwitter()" [disabled]="loggingIn">
-				Log in with Twitter
-			</button>
-			<button *ngIf="user" mat-raised-button type="button" (click)="logout()" [disabled]="loggingIn">
-				Log out
+<form class="title-container" (ngSubmit)="search()" #searchForm="ngForm" [@search]="'in'">
+	<div class="title">
+		<h1 class="mat-display-4">Twitter Sentiment</h1>
+	</div>
+	<mat-card class="search-container">
+		<mat-form-field>
+			<input required placeholder="Product Name" matInput [(ngModel)]="searchStr" [ngModelOptions]="{standalone: true}">
+		</mat-form-field>
+		<div class="search-button-container">
+			<button mat-raised-button color="primary" type="submit" [disabled]="!searchForm.valid">
+				<mat-icon>search</mat-icon>
 			</button>
 		</div>
-	</form>
+	</mat-card>
+	<div class="twitter-button-container">
+		<span class="mat-body-1 username" *ngIf="user">{{ user.profile.name }}</span>
+		<button *ngIf="!user" mat-raised-button type="button" (click)="loginWithTwitter()" [disabled]="loggingIn">
+			Log in with Twitter
+		</button>
+		<button *ngIf="user" mat-raised-button type="button" (click)="logout()" [disabled]="loggingIn">
+			Log out
+		</button>
+	</div>
+</form>
