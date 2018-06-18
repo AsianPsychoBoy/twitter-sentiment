@@ -5,7 +5,8 @@ import { Mongo } from 'meteor/mongo';
 import { Accounts } from 'meteor/accounts-base'
 
 import { Observable, of, Observer, BehaviorSubject, bindCallback, observable } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, flatMap, map, delay } from 'rxjs/operators';
+import { MeteorObservable, MongoObservable } from 'meteor-rxjs';
 
 const httpOptions = {
 	headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -27,7 +28,7 @@ export class TwitterService {
 		this.searchResults$ = Observable.create((observer: Observer<Tweet[]>) => {
 			// TODO: disable autopublish and move finding documents by userId to server-side
 			this.searchResultsHandle = this.searchResults.find({ userId: Meteor.userId() }).observeChanges({
-				changed: (id, fields) => {
+				added: (id, fields) => {
 					console.log('doc changed', id)
 					const tweets = JSON.parse(fields['tweets']);
 					observer.next(tweets);
@@ -41,27 +42,27 @@ export class TwitterService {
 	}
 
 	search(q: string): Observable<Tweet[]> {
-		return Meteor.call('search', q)
+		return MeteorObservable.call('search', q)
 			.pipe(
-				catchError(this.handleError<any>('search')),
-				switchMap((val) => {
+				flatMap((val) => {
 					return this.searchResults$;
-				})
+				}),
+				catchError(this.handleError<any>('search'))
 			);
 		// const tweets = JSON.parse(this.searchResults.findOne({ userId: Meteor.userId() })['tweets']);
 		// return of(tweets);
 	}
 
 	loginWithTwitter(): Observable<Meteor.User> {
-		return Observable.create((observer: Observer<Meteor.User>) => {
+		return  new Observable((subscriber) => {
 			Meteor.loginWithTwitter({}, (err) => {
 				if (err) {
 					// TODO: prevent the user from interacting with the site.
-					observer.error('Failed to log in with Twitter: ' + err);
+					subscriber.error('Failed to log in with Twitter: ' + err);
 				} else {
-					observer.next(Meteor.user());
+					subscriber.next(Meteor.user());
 					this.auth$.next(Meteor.user());
-					observer.complete();
+					subscriber.complete();
 				}
 			})
 		})
@@ -71,14 +72,14 @@ export class TwitterService {
 	}
 
 	logout(): Observable<Meteor.User> {
-		return Observable.create((observer: Observer<Meteor.User>) => {
+		return new Observable((subscriber) => {
 			Meteor.logout((err) => {
 				if (err) {
-					observer.error('Failed to logout: ' + err);
+					subscriber.error('Failed to logout: ' + err);
 				} else {
-					observer.next(Meteor.user());
+					subscriber.next(Meteor.user());
 					this.auth$.next(Meteor.user());
-					observer.complete();
+					subscriber.complete();
 				}
 			});
 		})
@@ -89,7 +90,7 @@ export class TwitterService {
 
 	private handleError<T> (operation = 'operation', result?: T) {
 		return (error: any): Observable<T> => {
-			console.error(error); // log to console instead
+			console.log(error); // log to console instead
 
 			// TODO: add a logging service that displays errors to the user
 			// this.log(`${operation} failed: ${error.message}`);

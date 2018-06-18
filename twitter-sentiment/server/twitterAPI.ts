@@ -28,7 +28,6 @@ export class Twitter {
 		})
 		.pipe(
 			map((results) => {
-				// The first argument passed into the callback of Meteor.call is an error object.
 				let errorObj: any = results[0];
 				if (errorObj) {
 					throw new Error(errorObj);

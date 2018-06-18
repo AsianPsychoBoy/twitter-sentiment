@@ -15,18 +15,23 @@ import { Subscription } from 'rxjs';
 })
 export class ResultsComponent implements OnInit, OnDestroy {
 	
-	searchResults: Tweet[];
+	searchResults: Tweet[] = [];
+
+	routeDataSubscription: Subscription;
 
 	constructor(private twitterService: TwitterService, private route: ActivatedRoute) {}
 
 	ngOnInit() {
-		this.route.data.subscribe(
+		this.routeDataSubscription = this.route.data.subscribe(
 			(data: { results: Tweet[] }) => {
 				this.searchResults = data.results;
 			}
 		)
 	}
 
-	ngOnDestroy() {}
+	ngOnDestroy() {
+		console.log('destoyed')
+		this.routeDataSubscription.unsubscribe();
+	}
 
 }

@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 })
 export class TweetComponent implements OnInit, OnDestroy {
 
-	@Input()tweet: Tweet;
+	@Input() tweet: Tweet;
 
 	sentiment: SentimentResults;
 
@@ -27,7 +27,6 @@ export class TweetComponent implements OnInit, OnDestroy {
 			results => {
 				this.sentiment = results;
 				this.changeDetector.detectChanges();
-				console.log(results);
 			}
 		)
 	}

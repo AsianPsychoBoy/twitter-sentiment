@@ -38,7 +38,6 @@ export class SearchComponent implements OnInit {
 	}
 
 	search() {
-		console.log('clicked search');
 		this.router.navigate(['search'], { queryParams: { q: this.searchStr } });
 	}
 

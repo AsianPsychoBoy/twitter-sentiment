@@ -8,9 +8,9 @@ export class AuthGuard implements CanActivate {
 
 	canActivate() {
 		const loggedIn = !!Meteor.user();
-		// if (!loggedIn) {
-		// 	this.router.navigate([''])
-		// }
+		if (!loggedIn) {
+			this.router.navigate([''])
+		}
 		console.log('checked auth');
 		return loggedIn;
 	}

@@ -53,13 +53,13 @@ Meteor.startup(() => {
 					console.log(res.data);
 
 					// TODO: enable this after testing
-					// searchResults.remove({
-					// 	userId: Meteor.userId()
-					// });
+					searchResults.remove({
+						userId: Meteor.userId()
+					});
 
-					// sentimentResults.remove({
-					// 	userId: Meteor.userId()
-					// });
+					sentimentResults.remove({
+						userId: Meteor.userId()
+					});
 
 					searchResults.upsert(
 						{

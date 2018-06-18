@@ -6,6 +6,7 @@ import { Accounts } from 'meteor/accounts-base'
 
 import { Observable, of, Observer, BehaviorSubject, bindCallback, observable } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
+import { MeteorObservable, MongoObservable } from 'meteor-rxjs';
 
 const httpOptions = {
 	headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -26,27 +27,27 @@ export class GoogleService {
 	}
 
 	analyzeSentiment(q: string, tweetId: string): Observable<SentimentResults> {
-		// return Meteor.call('analyze', q, tweetId)
-		// 	.pipe(
-		// 		catchError(this.handleError<any>('analyze')),
-		// 		switchMap((val) => {
-		// 			const sentimentResults$ = Observable.create((observer: Observer<any>) => {
-		// 				this.sentimentResultsHandle = this.sentimentResults.find({ tweetId }).observe({
-		// 					added: (doc) => {
-		// 						observer.next(doc);
-		// 					}
-		// 				});
-		// 			})
-		// 			this.sentimentResults$Array.push(sentimentResults$);
-		// 			return sentimentResults$;
-		// 		})
-		// 	)
-		return <any>of(this.sentimentResults.findOne({ tweetId }));
+		return MeteorObservable.call('analyze', q, tweetId)
+			.pipe(
+				switchMap((val) => {
+					const sentimentResults$ = Observable.create((observer: Observer<any>) => {
+						this.sentimentResultsHandle = this.sentimentResults.find({ tweetId }).observe({
+							added: (doc) => {
+								observer.next(doc);
+							}
+						});
+					})
+					this.sentimentResults$Array.push(sentimentResults$);
+					return sentimentResults$;
+				}),
+				catchError(this.handleError<any>('analyze')),
+			)
+		// return <any>of(this.sentimentResults.findOne({ tweetId }));
 	}
 
 	private handleError<T> (operation = 'operation', result?: T) {
 		return (error: any): Observable<T> => {
-			console.error(error); // log to console instead
+			console.log(error); // log to console instead
 
 			// TODO: add a logging service that displays errors to the user
 			// this.log(`${operation} failed: ${error.message}`);
