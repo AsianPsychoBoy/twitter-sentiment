@@ -34,6 +34,7 @@ export class GoogleService {
 						this.sentimentResultsHandle = this.sentimentResults.find({ tweetId }).observe({
 							added: (doc) => {
 								observer.next(doc);
+								observer.complete();
 							}
 						});
 					})
@@ -43,6 +44,39 @@ export class GoogleService {
 				catchError(this.handleError<any>('analyze')),
 			)
 		// return <any>of(this.sentimentResults.findOne({ tweetId }));
+	}
+
+	sentimentStats(): SentimentStats {
+		let results = {
+			positive: 0,
+			negative: 0,
+			veryPositive: 0,
+			veryNegative: 0,
+			neutral: 0,
+			mixed: 0
+		}
+
+		this.sentimentResults.find({ userId: Meteor.userId() }).forEach((doc: SentimentResults) => {
+			if (doc.magnitude > 1) {
+				if (Math.abs(doc.score) < 0.15) {
+					results.mixed++;
+				} else if (doc.score > 0) {
+					results.veryPositive++;
+				} else {
+					results.veryNegative++;
+				}
+			} else {
+				if (Math.abs(doc.score) < 0.15) {
+					results.neutral++;
+				} else if (doc.score > 0) {
+					results.positive++;
+				} else {
+					results.negative++;
+				}
+			}
+		});
+
+		return results;
 	}
 
 	private handleError<T> (operation = 'operation', result?: T) {
@@ -61,4 +95,10 @@ export class GoogleService {
 export interface SentimentResults {
 	score: number;
 	magnitude: number;
+}
+
+export interface SentimentStats {
+	positive: number;
+	negative: number;
+	neutral: number;
 }

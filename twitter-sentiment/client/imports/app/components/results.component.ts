@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy } from '@angular
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { ActivatedRoute } from '@angular/router';
 
-import { GoogleService } from '../services/google.service';
+import { GoogleService, SentimentStats } from '../services/google.service';
 import { TwitterService, Tweet} from '../services/twitter.service';
 
 import { Subscription } from 'rxjs';
@@ -37,16 +37,20 @@ import { Subscription } from 'rxjs';
 export class ResultsComponent implements OnInit, OnDestroy {
 	
 	searchResults: Tweet[] = [];
+	sentimentStats: SentimentStats;
 
 	routeDataSubscription: Subscription;
 
-	constructor(private twitterService: TwitterService, private route: ActivatedRoute) {}
+	constructor(private googleService: GoogleService, private route: ActivatedRoute) {}
 
 	ngOnInit() {
 		this.routeDataSubscription = this.route.data.subscribe(
 			(data: { results: Tweet[] }) => {
 				console.log(data);
 				this.searchResults = data.results;
+				setTimeout(() => {
+					this.sentimentStats = this.googleService.sentimentStats();
+				}, 2000);
 			}
 		)
 	}
